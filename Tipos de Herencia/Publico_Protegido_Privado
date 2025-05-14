@@ -1,1 +1,63 @@
-dsa
+#include <iostream>
+using namespace std;
+
+class Base {
+public:
+    int publico;
+protected:
+    int protegido;
+private:
+    int privado;
+
+public:
+    Base() : publico(1), protegido(2), privado(3) {}
+};
+
+// Herencia pública
+class DerivadaPublica : public Base {
+public:
+    void mostrar() {
+        cout << "Herencia pública:" << endl;
+        cout << "  publico: " << publico << endl;       // ✅ Accesible
+        cout << "  protegido: " << protegido << endl;   // ✅ Accesible
+        // cout << "  privado: " << privado << endl;    // ❌ Error: no accesible
+    }
+};
+
+// Herencia protegida
+class DerivadaProtegida : protected Base {
+public:
+    void mostrar() {
+        cout << "Herencia protegida:" << endl;
+        cout << "  publico (ahora protegido): " << publico << endl;     // ✅ Accesible
+        cout << "  protegido: " << protegido << endl;                   // ✅ Accesible
+        // cout << "  privado: " << privado << endl;                    // ❌ Error
+    }
+};
+
+// Herencia privada
+class DerivadaPrivada : private Base {
+public:
+    void mostrar() {
+        cout << "Herencia privada:" << endl;
+        cout << "  publico (ahora privado): " << publico << endl;       // ✅ Accesible
+        cout << "  protegido (ahora privado): " << protegido << endl;   // ✅ Accesible
+        // cout << "  privado: " << privado << endl;                    // ❌ Error
+    }
+};
+
+int main() {
+    DerivadaPublica dp;
+    dp.mostrar();
+    cout << dp.publico << endl; // ✅ Se puede acceder desde fuera
+
+    DerivadaProtegida dprot;
+    dprot.mostrar();
+    // cout << dprot.publico << endl; // ❌ Error: ahora es `protected`
+
+    DerivadaPrivada dpriv;
+    dpriv.mostrar();
+    // cout << dpriv.publico << endl; // ❌ Error: ahora es `private`
+
+    return 0;
+}
