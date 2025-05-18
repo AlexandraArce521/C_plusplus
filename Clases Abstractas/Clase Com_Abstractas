@@ -1,0 +1,63 @@
+#include <iostream>
+using namespace std;
+
+class Figura {
+public:
+    virtual void dibujar() = 0; // Método virtual puro
+    virtual double area() = 0;  // Otro método virtual puro
+};
+
+class Circulo : public Figura {
+private:
+    double radio;
+public:
+    Circulo(double r) : radio(r) {}
+
+    void dibujar() override {
+        cout << "Dibujando un círculo" << endl;
+    }
+
+    double area() override {
+        return 3.1416 * radio * radio;
+    }
+};
+
+class Cuadrado : public Figura {
+private:
+    double lado;
+public:
+    Cuadrado(double l) : lado(l) {}
+
+    void dibujar() override {
+        cout << "Dibujando un cuadrado" << endl;
+    }
+
+    double area() override {
+        return lado * lado;
+    }
+};
+
+int main() {
+    Figura* f1 = new Circulo(5);  // Aplicando polimorfismo
+    Figura* f2 = new Cuadrado(4);
+
+    f1->dibujar();
+    cout << "Área: " << f1->area() << endl;
+
+    f2->dibujar();
+    cout << "Área: " << f2->area() << endl;
+
+    delete f1;
+    delete f2;
+
+    Circulo f3(6);  // Sin aplicar polimorfismo
+    Cuadrado f4(7);
+
+    f3.dibujar();
+    cout << "Área: " << f3.area() << endl;
+
+    f4.dibujar();
+    cout << "Área: " << f4.area() << endl;
+
+    return 0;
+}
