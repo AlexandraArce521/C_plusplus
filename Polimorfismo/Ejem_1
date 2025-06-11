@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+using namespace std;
+
+class Producto {
+protected:
+    string nombre;
+    int cantidad;
+    double precioBase;
+    double porcentajeDescuento;
+    string codigo;
+
+public:
+    Producto(string n, int c, double pBase, double porcent, string cod)
+        : nombre(n), cantidad(c), precioBase(pBase), porcentajeDescuento(porcent), codigo(cod) {}
+
+    virtual double valorTotal() const {
+        return precioBase * cantidad;
+    }
+
+    virtual double aplicarDescuento() const {
+        return valorTotal() * (1 - porcentajeDescuento / 100.0);
+    }
+
+    virtual void mostrar() const = 0; // aún es abstracta
+
+    virtual ~Producto() = default;
+};
+
+class Electronico : public Producto {
+public:
+    Electronico(string n, int c, double pBase, double porcent, string cod)
+        : Producto(n, c, pBase, porcent, cod) {}
+
+    void mostrar() const override {
+        cout << fixed << setprecision(2);
+        cout << "=== INFORMACION DE VENTA DE PRODUCTOS ELECTRÓNICOS ===\n";
+        cout << "Nombre: " << nombre << endl;
+        cout << "Cantidad: " << cantidad << endl;
+        cout << "Precio Base: $" << precioBase << " c/u\n";
+        cout << "Código: " << codigo << endl;
+        cout << "Descuento: " << porcentajeDescuento << "%\n";
+        cout << "Precio Total: $" << valorTotal() << endl;
+        cout << "Precio Final (con descuento): $" << aplicarDescuento() << endl;
+        cout << "-------------------------------------------------------\n";
+    }
+};
+
+class Alimento : public Producto {
+public:
+    Alimento(string n, int c, double pBase, double porcent, string cod)
+        : Producto(n, c, pBase, porcent, cod) {}
+
+    void mostrar() const override {
+        cout << fixed << setprecision(2);
+        cout << "=== INFORMACION DE VENTA DE PRODUCTOS ALIMENTICIOS ===\n";
+        cout << "Nombre: " << nombre << endl;
+        cout << "Cantidad: " << cantidad << endl;
+        cout << "Precio Base: $" << precioBase << " c/u\n";
+        cout << "Código: " << codigo << endl;
+        cout << "Descuento: " << porcentajeDescuento << "%\n";
+        cout << "Precio Total: $" << valorTotal() << endl;
+        cout << "Precio Final (con descuento): $" << aplicarDescuento() << endl;
+        cout << "-------------------------------------------------------\n";
+    }
+};
+
+int main() {
+    vector<Producto*> productos;
+
+    productos.push_back(new Electronico("Laptop", 3, 1208.90, 30, "123455"));
+    productos.push_back(new Alimento("Arroz", 5, 3.80, 10, "A001"));
+
+    for (Producto* p : productos) {
+        p->mostrar();
+    }
+
+    for (Producto* p : productos) {
+        delete p;
+    }
+
+    return 0;
+}
+
