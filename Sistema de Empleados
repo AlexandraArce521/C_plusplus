@@ -279,7 +279,7 @@ public:
     }
 
     string getNombre() const { return empleado->getName(); }
-    string getDni() const { return empleado->getDni(); }
+    int getDni() const { return empleado->getDni(); }
     string getTipo() const { return empleado->obtenerTipo(); }
     string getTipoAfp() const { return empleado->getAfp(); }
     double getSueldoBruto() const { return empleado->getSueldo(); }
@@ -387,15 +387,16 @@ void guardarNomina(const Nomina& nomina) {
 
 class UsuarioAdministrador : public Usuario {
 private:
-    string nombre, dni;
+    string nombre; 
+    int dni;
     Empresa* empresa;
     UsuarioTrabajador* trabajador;
 
 public:
-    UsuarioAdministrador(string nom, string d, string id, string pass, Empresa* emp)
+    UsuarioAdministrador(string nom, int d, string id, string pass, Empresa* emp)
         : Usuario(id, pass), nombre(nom), dni(d), empresa(emp) {}
 
-    void setDatos( string nom,  string d) {
+    void setDatos( string nom,  int d) {
         nombre = nom;
         dni = d;
         cout<<"cambios hechos..."<<endl;
@@ -465,7 +466,7 @@ public:
         }
     }
     string getNombre(){return nombre;}
-    string getDni(){return dni;}
+    int getDni(){return dni;}
 
 };
 void guardarNomina(const Nomina& nomina);
@@ -599,7 +600,8 @@ UsuarioTrabajador* registrarTrabajador(Empresa* empresa, map<string, UsuarioTrab
 }
 
 UsuarioAdministrador* registrarAdministrador(Empresa* empresa, map<string, UsuarioAdministrador*>& admins, string id, string pass) {
-    string nombre, dni;
+    string nombre; 
+    int dni;
     cout << "Registro de administrador\n";
     cout << "Nombre: "; cin >> nombre;
     cout << "DNI: "; cin >> dni;
@@ -641,13 +643,13 @@ void cargarTrabajadores(Empresa* empresa, map<string, UsuarioTrabajador*>& traba
     string linea;
     while (getline(file, linea)) {
         stringstream ss(linea);
-        string id, pass, nombre, celular, afpTipo, tipo, dni;
+        string id, pass, nombre, celular, afpTipo, tipo, dniStr;
         double sueldo;
-        int hijos, faltas;
+        int hijos, faltas, dni;
 
         getline(ss, id, '|');
         getline(ss, pass, '|');
-        getline(ss, dni, '|'); // ahora dni es string
+        getline(ss, dniStr, '|');
         getline(ss, nombre, '|');
         getline(ss, celular, '|');
         ss >> sueldo; ss.ignore();
@@ -655,6 +657,13 @@ void cargarTrabajadores(Empresa* empresa, map<string, UsuarioTrabajador*>& traba
         getline(ss, afpTipo, '|');
         ss >> faltas; ss.ignore();
         getline(ss, tipo);
+
+        try {
+            dni = stoi(dniStr); 
+        } catch (...) {
+            cout << "(!) DNI inválido en archivo: " << dniStr << endl;
+            continue;
+        }
 
         AFP* afp = nullptr;
         if (afpTipo == "AFP Integra") afp = new AFPIntegra();
@@ -683,14 +692,22 @@ void cargarAdministradores(Empresa* empresa, map<string, UsuarioAdministrador*>&
     string linea;
     while (getline(file, linea)) {
         stringstream ss(linea);
-        string id, pass, nombre, dni;
+        string id, pass, nombre, dniStr;
+        int dni;
         getline(ss, id, '|');
         getline(ss, pass,'|');
         getline(ss, nombre, '|');
-        getline(ss, dni);
+        getline(ss, dniStr);
 
-        UsuarioAdministrador* admin = new UsuarioAdministrador(nombre, dni, id, pass, empresa);
-        admins[id] = admin;
+    try {
+        dni = stoi(dniStr);
+    } catch (...) {
+        cout << "(!) DNI inválido para administrador: " << dniStr << endl;
+        continue;
+    }
+
+    UsuarioAdministrador* admin = new UsuarioAdministrador(nombre, dni, id, pass, empresa);
+    admins[id] = admin;
     }
     file.close();
 }
@@ -703,8 +720,8 @@ void menuTrabajador(UsuarioTrabajador* t, map<string, UsuarioTrabajador*>& usuar
             cout << "\n1. Actualizar datos\n2. Consultar boleta\n3. Salir\nOpcion: ";
             cin >> opcion;
             if (opcion == 1) {
-                string nombre, dni, celular, afpTipo;
-                int hijos;
+                string nombre, celular, afpTipo;
+                int hijos, dni;
                 cout << "Nuevo nombre: "; cin >> nombre;
                 cout << "Nuevo DNI: "; cin >> dni;
                 cout << "Nuevo celular: "; cin >> celular;
@@ -740,7 +757,7 @@ void menuAdmin(UsuarioAdministrador* admin, Nomina& n, Empresa& empresa, map<str
             cout << "\n1. Actualizar datos de empleado\n2. Actualizar empresa\n3. Reportes\n4. Mostrar sueldos ordenados\n5. Salir\nOpcion: ";
             cin >> op2;
             if (op2 == 1) {
-                string dni;
+                int dni;
                 cout << "DNI del empleado a actualizar: ";
                 cin >> dni;
                 UsuarioTrabajador* t = empresa.buscarPorDni(dni);
@@ -760,7 +777,7 @@ void menuAdmin(UsuarioAdministrador* admin, Nomina& n, Empresa& empresa, map<str
                     if (r == 1) {
                         admin->generarReporteGeneral(n);
                     } else if (r == 2) {
-                        string dni;
+                        int dni;
                         cout << "DNI: "; cin >> dni;
                         UsuarioTrabajador* t = empresa.buscarPorDni(dni);
                         if (t){
@@ -771,7 +788,7 @@ void menuAdmin(UsuarioAdministrador* admin, Nomina& n, Empresa& empresa, map<str
                         }
                             
                     } else if (r == 3) {
-                        string dni;
+                        int dni;
                         int faltas;
                         cout << "DNI: "; cin >> dni;
                         UsuarioTrabajador* t = empresa.buscarPorDni(dni);
@@ -903,4 +920,5 @@ int main() {
     }
     return 0;
 }
+
 
