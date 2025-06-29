@@ -99,7 +99,7 @@ public:
         trabajadores.push_back(emp);
     }
 
-    UsuarioTrabajador* buscarPorDni(string& dni);
+    UsuarioTrabajador* buscarPorDni(int& dni);
 
     string getNombre() { return nombre; }
 
@@ -637,16 +637,17 @@ void guardarAdministradores(const map<string, UsuarioAdministrador*>& admins) {
 void cargarTrabajadores(Empresa* empresa, map<string, UsuarioTrabajador*>& trabajadores) {
     ifstream file("trabajadores.txt");
     if (!file.is_open()) return;
+
     string linea;
     while (getline(file, linea)) {
         stringstream ss(linea);
-        string id, pass, dni, nombre,celular, afpTipo, tipo;
+        string id, pass, nombre, celular, afpTipo, tipo, dni;
         double sueldo;
         int hijos, faltas;
 
         getline(ss, id, '|');
         getline(ss, pass, '|');
-        getline(ss, dni, '|');
+        getline(ss, dni, '|'); // ahora dni es string
         getline(ss, nombre, '|');
         getline(ss, celular, '|');
         ss >> sueldo; ss.ignore();
@@ -672,6 +673,7 @@ void cargarTrabajadores(Empresa* empresa, map<string, UsuarioTrabajador*>& traba
             empresa->agregarEmpleado(t);
         }
     }
+
     file.close();
 }
 
