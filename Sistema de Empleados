@@ -824,11 +824,11 @@ int main() {
     cargarTrabajadores(&empresa, trabajadores);
     cargarAdministradores(&empresa, administradores);
 
-    vector <string> menu = {"\n____________________________________________________",
+    vector <string> menu = {"\n__",
                                 "1. Inciar sesion como Trabajador",
                                 "2. Iniciar sesion como Administrador",
                                 "3. Salir",
-                                "____________________________________________________\n"
+                                "\n"
                                 };
 
     while (true) {
@@ -920,5 +920,3 @@ int main() {
     }
     return 0;
 }
-
-
